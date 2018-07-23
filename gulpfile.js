@@ -7,17 +7,15 @@ const mozjpeg  = require('imagemin-mozjpeg');
 const pug = require('gulp-pug');
 const browserSync = require('browser-sync');
 const notify = require('gulp-notify');
+const plumber = require('gulp-plumber');
 
 gulp.task('css', () => {
   return gulp.src('./src/css/style.scss')
+    .pipe(plumber())
     .pipe(sass({
       outputStyle: 'expanded'
       }))
-    .pipe(gulp.dest('./dest'))
-    .pipe(notify({
-      title: 'sass compiled!',
-      message: 'scssファイルが更新されました！'
-      }));
+    .pipe(gulp.dest('./dist'))
   });
 
 gulp.task('img', () => {
@@ -26,22 +24,23 @@ gulp.task('img', () => {
       pngquant({ quality: '65-80', speed: 1 }),
       mozjpeg({ quality: 80 })
     ]))
-    .pipe(gulp.dest('./dest/img'));
+    .pipe(gulp.dest('./dist/img'));
   });
 
 gulp.task('html', () => {
   return gulp.src(['./src/**/*.pug', '!./src/**/_*.pug'])
+    .pipe(plumber())
     .pipe(pug({
       pretty: true
       }))
-    .pipe(gulp.dest('./dest'))
+    .pipe(gulp.dest('./dist'))
   });
 
 gulp.task("browserSync", ["css", "html"], () => {
   browserSync({
     server: {
       /* rootとなるディレクトリを指定 */
-      baseDir: "./dest"
+      baseDir: "./dist"
     }
     });
   gulp.watch("src/**/**", () => {
