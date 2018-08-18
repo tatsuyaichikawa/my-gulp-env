@@ -6,6 +6,8 @@ const pngquant = require('imagemin-pngquant');
 const mozjpeg  = require('imagemin-mozjpeg');
 const pug = require('gulp-pug');
 const browserSync = require('browser-sync');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
 const notify = require('gulp-notify');
 const plumber = require('gulp-plumber');
 
@@ -36,7 +38,7 @@ gulp.task('html', () => {
     .pipe(gulp.dest('./dist'))
   });
 
-gulp.task("browserSync", ["css", "html"], () => {
+gulp.task("browserSync", ["css", "html", "js"], () => {
   browserSync({
     server: {
       /* rootとなるディレクトリを指定 */
@@ -48,12 +50,20 @@ gulp.task("browserSync", ["css", "html"], () => {
     });
   });
 
-
+gulp.task('js', () => {
+  browserify({
+    entries: ['./src/js/app.js']
+  })
+  .bundle()
+  .pipe(source('app.js'))
+  .pipe(gulp.dest('dist/js'));
+})
 
 /* pugファイルとscssファイルに変更があったらhtmlとcssのタスクを実行 */
 gulp.task('watch', () => {
   gulp.watch('./src/**/*.pug', ['html']),
-  gulp.watch('./src/css/style.scss', ['css'])
+  gulp.watch('./src/css/style.scss', ['css']),
+  gulp.watch('./src/js/**/*.js');
   })
 
 
