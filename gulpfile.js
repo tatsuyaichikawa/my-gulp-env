@@ -38,7 +38,7 @@ gulp.task('html', () => {
     .pipe(gulp.dest('./dist'))
   });
 
-gulp.task("browserSync", ["css", "html", "js"], () => {
+gulp.task("browserSync", ["css", "html", "js", "img"], () => {
   browserSync({
     server: {
       /* rootとなるディレクトリを指定 */
@@ -68,3 +68,4 @@ gulp.task('watch', () => {
 
 
 gulp.task('default', ['browserSync', 'watch']);
+gulp.task('build', ["css", "html", "js", "img"]);
